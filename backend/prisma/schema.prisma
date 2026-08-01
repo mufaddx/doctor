@@ -1,0 +1,664 @@
+// ==========================================================
+// Touch of Cure — Prisma Schema
+// PostgreSQL
+// ==========================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------
+// ENUMS
+// ---------------------------------------------------------
+
+enum UserRole {
+  PATIENT
+  THERAPIST
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum AuthProvider {
+  PHONE_OTP
+  GOOGLE
+  APPLE
+  EMAIL
+}
+
+enum AppointmentType {
+  CLINIC_VISIT
+  HOME_VISIT
+  VIDEO_CONSULTATION
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REJECTED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum PaymentMethod {
+  UPI
+  CARD
+  NETBANKING
+  WALLET
+  RAZORPAY
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum TransactionSource {
+  APPOINTMENT_PAYMENT
+  REFUND
+  REFERRAL_BONUS
+  WALLET_TOPUP
+  PAYOUT
+  ADJUSTMENT
+}
+
+enum NotificationType {
+  APPOINTMENT
+  PAYMENT
+  CHAT
+  SYSTEM
+  OFFER
+  REMINDER
+}
+
+enum KycStatus {
+  NOT_SUBMITTED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CouponType {
+  PERCENTAGE
+  FLAT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+// ---------------------------------------------------------
+// CORE USER
+// ---------------------------------------------------------
+
+model User {
+  id              String        @id @default(uuid())
+  role            UserRole
+  fullName        String
+  email           String?       @unique
+  phone           String        @unique
+  countryCode     String        @default("+91")
+  passwordHash    String?
+  authProvider    AuthProvider  @default(PHONE_OTP)
+  firebaseUid     String?       @unique
+  avatarUrl       String?
+  isActive        Boolean       @default(true)
+  isVerified      Boolean       @default(false)
+  fcmTokens       String[]      @default([])
+  refreshTokens   RefreshToken[]
+  otps            OtpCode[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  patient         Patient?
+  therapist       Therapist?
+  admin           Admin?
+
+  notifications   Notification[]
+  reviewsWritten  Review[]        @relation("ReviewAuthor")
+  wallet          Wallet?
+  chatMessages    ChatMessage[]
+  auditLogs       AuditLog[]
+  supportTickets  SupportTicket[]
+
+  @@index([role])
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model OtpCode {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone     String
+  codeHash  String
+  purpose   String   @default("LOGIN") // LOGIN | RESET_PASSWORD | VERIFY_PHONE
+  expiresAt DateTime
+  consumed  Boolean  @default(false)
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+  @@map("otp_codes")
+}
+
+// ---------------------------------------------------------
+// PATIENT
+// ---------------------------------------------------------
+
+model Patient {
+  id              String    @id @default(uuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth     DateTime?
+  gender          String?
+  medicalHistory  String?
+  referralCode    String    @unique @default(cuid())
+  referredById    String?
+
+  addresses       Address[]
+  appointments    Appointment[]
+  prescriptions   Prescription[]
+  progressLogs    ProgressLog[]
+  reviews         Review[]
+  couponRedemptions CouponRedemption[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("patients")
+}
+
+model Address {
+  id        String   @id @default(uuid())
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  label     String   // Home / Work / Other
+  line1     String
+  line2     String?
+  city      String
+  state     String
+  pincode   String
+  latitude  Float?
+  longitude Float?
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("addresses")
+}
+
+// ---------------------------------------------------------
+// THERAPIST
+// ---------------------------------------------------------
+
+model Therapist {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialization    String[]  @default([]) // Back Pain, Neck Pain, Sports Injury...
+  experienceYears   Int       @default(0)
+  bio               String?
+  clinicFee         Decimal   @default(0) @db.Decimal(10, 2)
+  homeVisitFee      Decimal   @default(0) @db.Decimal(10, 2)
+  videoFee          Decimal   @default(0) @db.Decimal(10, 2)
+  ratingAvg         Float     @default(0)
+  ratingCount       Int       @default(0)
+  kycStatus         KycStatus @default(NOT_SUBMITTED)
+  isAvailable       Boolean   @default(true)
+  clinicAddress     String?
+  latitude          Float?
+  longitude         Float?
+
+  certificates      Certificate[]
+  availabilitySlots AvailabilitySlot[]
+  appointments      Appointment[]
+  prescriptions     Prescription[]
+  exercises         Exercise[]
+  reviews           Review[]
+  payouts           Payout[]
+  bankDetail        BankDetail?
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("therapists")
+}
+
+model Certificate {
+  id          String    @id @default(uuid())
+  therapistId String
+  therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+  title       String
+  fileUrl     String
+  verified    Boolean   @default(false)
+  uploadedAt  DateTime  @default(now())
+
+  @@map("certificates")
+}
+
+model BankDetail {
+  id            String    @id @default(uuid())
+  therapistId   String    @unique
+  therapist     Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+  accountHolder String
+  accountNumber String
+  ifscCode      String
+  bankName      String
+  upiId         String?
+  verified      Boolean   @default(false)
+  updatedAt     DateTime  @updatedAt
+
+  @@map("bank_details")
+}
+
+model AvailabilitySlot {
+  id          String    @id @default(uuid())
+  therapistId String
+  therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+  dayOfWeek   Int        // 0=Sun ... 6=Sat
+  startTime   String     // "09:00"
+  endTime     String     // "13:00"
+  isActive    Boolean    @default(true)
+
+  @@index([therapistId])
+  @@map("availability_slots")
+}
+
+// ---------------------------------------------------------
+// ADMIN
+// ---------------------------------------------------------
+
+model Admin {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permissions String[] @default([]) // fine-grained RBAC keys
+  isSuper     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@map("admins")
+}
+
+// ---------------------------------------------------------
+// APPOINTMENTS
+// ---------------------------------------------------------
+
+model Appointment {
+  id              String            @id @default(uuid())
+  patientId       String
+  patient         Patient           @relation(fields: [patientId], references: [id])
+  therapistId     String
+  therapist       Therapist         @relation(fields: [therapistId], references: [id])
+  type            AppointmentType
+  status          AppointmentStatus @default(PENDING)
+  scheduledDate   DateTime
+  startTime       String
+  endTime         String
+  durationMinutes Int               @default(30)
+  addressId       String?
+  problem         String?
+  notes           String?
+  consultationFee Decimal           @db.Decimal(10, 2)
+  platformFee     Decimal           @default(0) @db.Decimal(10, 2)
+  discountAmount  Decimal           @default(0) @db.Decimal(10, 2)
+  totalAmount     Decimal           @db.Decimal(10, 2)
+  cancelReason    String?
+  cancelledBy     String?
+
+  payment         Payment?
+  prescription    Prescription?
+  review          Review?
+  chatThreadId    String?
+  videoSession    VideoSession?
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([patientId])
+  @@index([therapistId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@map("appointments")
+}
+
+model VideoSession {
+  id            String      @id @default(uuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  channelName   String
+  agoraToken    String?
+  startedAt     DateTime?
+  endedAt       DateTime?
+  durationSecs  Int?
+
+  @@map("video_sessions")
+}
+
+// ---------------------------------------------------------
+// PAYMENTS / WALLET / COUPONS
+// ---------------------------------------------------------
+
+model Payment {
+  id                String        @id @default(uuid())
+  appointmentId     String        @unique
+  appointment       Appointment   @relation(fields: [appointmentId], references: [id])
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  method            PaymentMethod
+  status            PaymentStatus @default(PENDING)
+  amount            Decimal       @db.Decimal(10, 2)
+  refund            Refund?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@map("payments")
+}
+
+model Refund {
+  id            String   @id @default(uuid())
+  paymentId     String   @unique
+  payment       Payment  @relation(fields: [paymentId], references: [id])
+  amount        Decimal  @db.Decimal(10, 2)
+  reason        String?
+  razorpayRefundId String?
+  status        PaymentStatus @default(PENDING)
+  processedAt   DateTime?
+  createdAt     DateTime @default(now())
+
+  @@map("refunds")
+}
+
+model Wallet {
+  id           String        @id @default(uuid())
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance      Decimal       @default(0) @db.Decimal(10, 2)
+  transactions Transaction[]
+  updatedAt    DateTime      @updatedAt
+
+  @@map("wallets")
+}
+
+model Transaction {
+  id          String             @id @default(uuid())
+  walletId    String
+  wallet      Wallet             @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  type        TransactionType
+  source      TransactionSource
+  amount      Decimal            @db.Decimal(10, 2)
+  description String?
+  referenceId String?
+  createdAt   DateTime           @default(now())
+
+  @@index([walletId])
+  @@map("transactions")
+}
+
+model Payout {
+  id          String    @id @default(uuid())
+  therapistId String
+  therapist   Therapist @relation(fields: [therapistId], references: [id])
+  amount      Decimal   @db.Decimal(10, 2)
+  status      PaymentStatus @default(PENDING)
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@map("payouts")
+}
+
+model Coupon {
+  id             String             @id @default(uuid())
+  code           String             @unique
+  type           CouponType
+  value          Decimal            @db.Decimal(10, 2)
+  maxDiscount    Decimal?           @db.Decimal(10, 2)
+  minOrderValue  Decimal?           @db.Decimal(10, 2)
+  usageLimit     Int?
+  usedCount      Int                @default(0)
+  validFrom      DateTime
+  validUntil     DateTime
+  isActive       Boolean            @default(true)
+  redemptions    CouponRedemption[]
+  createdAt      DateTime           @default(now())
+
+  @@map("coupons")
+}
+
+model CouponRedemption {
+  id        String   @id @default(uuid())
+  couponId  String
+  coupon    Coupon   @relation(fields: [couponId], references: [id])
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  redeemedAt DateTime @default(now())
+
+  @@unique([couponId, patientId])
+  @@map("coupon_redemptions")
+}
+
+// ---------------------------------------------------------
+// CLINICAL: PRESCRIPTIONS / EXERCISES / PROGRESS
+// ---------------------------------------------------------
+
+model Prescription {
+  id            String      @id @default(uuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  patientId     String
+  patient       Patient     @relation(fields: [patientId], references: [id])
+  therapistId   String
+  therapist     Therapist   @relation(fields: [therapistId], references: [id])
+  diagnosis     String
+  advice        String?
+  medicines     Json        // [{ name, dosage, frequency }]
+  pdfUrl        String?
+  createdAt     DateTime    @default(now())
+
+  @@map("prescriptions")
+}
+
+model Exercise {
+  id              String    @id @default(uuid())
+  therapistId     String?
+  therapist       Therapist? @relation(fields: [therapistId], references: [id])
+  title           String
+  category        String     // Back Pain, Neck Pain, Knee...
+  level           String     // Beginner, Intermediate, Advanced
+  durationMinutes Int
+  videoUrl        String
+  thumbnailUrl    String?
+  instructions    String[]   @default([])
+  isGlobal        Boolean    @default(false) // in admin exercise library
+  assignments     ExerciseAssignment[]
+  createdAt       DateTime   @default(now())
+
+  @@map("exercises")
+}
+
+model ExerciseAssignment {
+  id           String   @id @default(uuid())
+  exerciseId   String
+  exercise     Exercise @relation(fields: [exerciseId], references: [id])
+  progressLogId String?
+  progressLog  ProgressLog? @relation(fields: [progressLogId], references: [id])
+  sets         Int      @default(3)
+  completed    Boolean  @default(false)
+  assignedAt   DateTime @default(now())
+  completedAt  DateTime?
+
+  @@map("exercise_assignments")
+}
+
+model ProgressLog {
+  id           String     @id @default(uuid())
+  patientId    String
+  patient      Patient    @relation(fields: [patientId], references: [id])
+  condition    String     // Back Pain etc.
+  painLevel    Int        // 0-10
+  notes        String?
+  loggedAt     DateTime   @default(now())
+  assignments  ExerciseAssignment[]
+
+  @@index([patientId])
+  @@map("progress_logs")
+}
+
+// ---------------------------------------------------------
+// REVIEWS / CHAT / NOTIFICATIONS
+// ---------------------------------------------------------
+
+model Review {
+  id            String      @id @default(uuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  patientId     String
+  patient       Patient     @relation(fields: [patientId], references: [id])
+  therapistId   String
+  therapist     Therapist   @relation(fields: [therapistId], references: [id])
+  authorId      String
+  author        User        @relation("ReviewAuthor", fields: [authorId], references: [id])
+  rating        Int         // 1-5
+  comment       String?
+  createdAt     DateTime    @default(now())
+
+  @@map("reviews")
+}
+
+model ChatThread {
+  id          String        @id @default(uuid())
+  patientId   String
+  therapistId String
+  messages    ChatMessage[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([patientId, therapistId])
+  @@map("chat_threads")
+}
+
+model ChatMessage {
+  id         String     @id @default(uuid())
+  threadId   String
+  thread     ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  senderId   String
+  sender     User       @relation(fields: [senderId], references: [id])
+  content    String
+  attachmentUrl String?
+  isRead     Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+
+  @@index([threadId])
+  @@map("chat_messages")
+}
+
+model Notification {
+  id        String            @id @default(uuid())
+  userId    String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  body      String
+  data      Json?
+  isRead    Boolean           @default(false)
+  createdAt DateTime          @default(now())
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+// ---------------------------------------------------------
+// CMS / SUPPORT / AUDIT
+// ---------------------------------------------------------
+
+model Banner {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  title     String?
+  linkUrl   String?
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("banners")
+}
+
+model Blog {
+  id        String   @id @default(uuid())
+  title     String
+  slug      String   @unique
+  content   String
+  coverUrl  String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blogs")
+}
+
+model Faq {
+  id        String   @id @default(uuid())
+  question  String
+  answer    String
+  category  String?
+  sortOrder Int      @default(0)
+
+  @@map("faqs")
+}
+
+model SupportTicket {
+  id        String       @id @default(uuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  subject   String
+  message   String
+  status    TicketStatus @default(OPEN)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@map("support_tickets")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@map("audit_logs")
+}

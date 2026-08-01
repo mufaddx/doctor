@@ -1,0 +1,42 @@
+# Secrets — never commit real credentials
+backend/.env
+admin-panel/.env.local
+**/google-services.json
+**/GoogleService-Info.plist
+**/*.keystore
+**/*.jks
+key.properties
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Backend (NestJS)
+backend/dist/
+backend/coverage/
+
+# Admin panel (Next.js)
+admin-panel/.next/
+admin-panel/out/
+
+# Flutter (both apps)
+**/.dart_tool/
+**/.flutter-plugins-dependencies
+**/build/
+**/android/.gradle/
+**/android/app/libs/*.aar
+**/android/local.properties
+**/android/**/hs_err_pid*.log
+**/android/**/replay_pid*.log
+**/ios/Pods/
+**/*.g.dart
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+
+# Local scratch
+/welcome/
+.claude/

@@ -1,0 +1,91 @@
+name: touch_of_cure
+description: Touch of Cure - Physiotherapy at Home. Patient application.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Routing
+  go_router: ^14.6.2
+
+  # Networking
+  dio: ^5.7.0
+  pretty_dio_logger: ^1.4.0
+
+  # Local storage
+  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.3.3
+
+  # Firebase
+  firebase_core: ^3.9.0
+  firebase_auth: ^5.3.4
+  firebase_messaging: ^15.1.6
+  google_sign_in: ^6.2.2
+  sign_in_with_apple: ^6.1.3
+
+  # Payments
+  razorpay_flutter: ^1.3.7
+
+  # Video calling
+  agora_rtc_engine: ^6.5.4
+  permission_handler: ^11.3.1
+
+  # Realtime chat
+  socket_io_client: ^2.0.3+1
+
+  # Maps and location
+  google_maps_flutter: ^2.10.0
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
+
+  # UI
+  cached_network_image: ^3.4.1
+  shimmer: ^3.0.0
+  flutter_svg: ^2.0.16
+  fl_chart: ^0.69.2
+  table_calendar: ^3.1.3
+  smooth_page_indicator: ^1.2.0
+  pinput: ^5.0.0
+  flutter_local_notifications: ^18.0.1
+  image_picker: ^1.1.2
+  video_player: ^2.9.2
+  chewie: ^1.8.5
+  url_launcher: ^6.3.1
+  share_plus: ^10.1.2
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.14
+  riverpod_generator: ^2.6.3
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/onboarding/
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
