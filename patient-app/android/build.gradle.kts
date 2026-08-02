@@ -28,10 +28,21 @@ subprojects {
     // sets its low compileSdk value — that later line would just overwrite
     // this. afterEvaluate runs once the whole subproject script has executed,
     // so this override applies last and actually sticks.
-    afterEvaluate {
+    //
+    // evaluationDependsOn(":app") above forces :app to evaluate eagerly, so by
+    // the time Gradle configures :app's own subprojects{} closure it may
+    // already be evaluated — calling afterEvaluate on it then throws. Applying
+    // the override immediately in that case is equally correct.
+    fun forceLibraryCompileSdk() {
         extensions.findByType<com.android.build.gradle.LibraryExtension>()?.let {
             it.compileSdk = 36
         }
+    }
+
+    if (project.state.executed) {
+        forceLibraryCompileSdk()
+    } else {
+        afterEvaluate { forceLibraryCompileSdk() }
     }
 }
 
