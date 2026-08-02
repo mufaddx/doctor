@@ -29,6 +29,9 @@ subprojects {
     // this. afterEvaluate runs once the whole subproject script has executed,
     // so this override applies last and actually sticks.
     afterEvaluate {
+        extensions.findByType<com.android.build.api.dsl.LibraryExtension>()?.let {
+            it.compileSdk = 36
+        }
         extensions.findByType<com.android.build.gradle.LibraryExtension>()?.let {
             it.compileSdk = 36
         }
