@@ -83,7 +83,8 @@ export class ProgressService {
       this.prisma.exerciseAssignment.groupBy({
         by: ['completed'],
         where: { progressLog: { patientId } },
-        _count: { _all: true },
+        orderBy: { completed: 'asc' },
+        _count: true,
       }),
       this.prisma.appointment.count({
         where: { patientId, status: 'COMPLETED' },
@@ -91,9 +92,9 @@ export class ProgressService {
     ]);
 
     const completedExercises =
-      assignmentStats.find((s) => s.completed)?._count._all ?? 0;
+      assignmentStats.find((s) => s.completed)?._count ?? 0;
     const pendingExercises =
-      assignmentStats.find((s) => !s.completed)?._count._all ?? 0;
+      assignmentStats.find((s) => !s.completed)?._count ?? 0;
 
     return {
       points: logs.map((log) => ({

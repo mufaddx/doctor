@@ -117,14 +117,15 @@ export class ReviewsService {
       this.prisma.review.groupBy({
         by: ['rating'],
         where: { therapistId },
-        _count: { _all: true },
+        orderBy: { rating: 'asc' },
+        _count: true,
       }),
     ]);
 
     // Fill in zero counts so the UI can render all five bars
     const histogram = [5, 4, 3, 2, 1].map((star) => ({
       rating: star,
-      count: distribution.find((d) => d.rating === star)?._count._all ?? 0,
+      count: distribution.find((d) => d.rating === star)?._count ?? 0,
     }));
 
     return { ...paginate(items, total, page, limit), histogram };
