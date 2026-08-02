@@ -50,22 +50,26 @@ abstract final class AppTheme {
   static ThemeData _build(Brightness brightness) {
     final bool isDark = brightness == Brightness.dark;
 
-    final ColorScheme scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.brandTeal,
-      brightness: brightness,
-    ).copyWith(
-      primary: isDark ? AppColors.brandTealLight : AppColors.brandTeal,
-      surface: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-      error: AppColors.danger,
-    );
+    final ColorScheme scheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.brandTeal,
+          brightness: brightness,
+        ).copyWith(
+          primary: isDark ? AppColors.brandTealLight : AppColors.brandTeal,
+          surface: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+          error: AppColors.danger,
+        );
 
-    final Color background =
-        isDark ? AppColors.darkBackground : AppColors.lightBackground;
+    final Color background = isDark
+        ? AppColors.darkBackground
+        : AppColors.lightBackground;
     final Color border = isDark ? AppColors.darkBorder : AppColors.lightBorder;
-    final Color textPrimary =
-        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final Color textSecondary =
-        isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    final Color textPrimary = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.lightTextPrimary;
+    final Color textSecondary = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.lightTextSecondary;
 
     return ThemeData(
       useMaterial3: true,
@@ -87,8 +91,9 @@ abstract final class AppTheme {
         ),
         iconTheme: IconThemeData(color: textPrimary),
         // Keeps the status bar icons readable against the app bar in both modes
-        systemOverlayStyle:
-            isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        systemOverlayStyle: isDark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
       ),
 
       cardTheme: CardTheme(
@@ -148,7 +153,10 @@ abstract final class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: scheme.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         hintStyle: TextStyle(color: textSecondary, fontSize: 14),
         labelStyle: TextStyle(color: textSecondary, fontSize: 14),
         border: OutlineInputBorder(
@@ -226,7 +234,9 @@ abstract final class AppTheme {
 
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: isDark ? AppColors.darkSurface : AppColors.lightTextPrimary,
+        backgroundColor: isDark
+            ? AppColors.darkSurface
+            : AppColors.lightTextPrimary,
         contentTextStyle: const TextStyle(
           fontFamily: _fontFamily,
           color: Colors.white,

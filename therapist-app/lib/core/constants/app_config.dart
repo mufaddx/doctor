@@ -53,7 +53,8 @@ abstract final class ApiRoutes {
   static const String prescriptions = '/prescriptions';
   static const String exercises = '/exercises';
   static const String assignExercises = '/exercises/assign';
-  static String patientProgress(String patientId) => '/progress/patient/$patientId';
+  static String patientProgress(String patientId) =>
+      '/progress/patient/$patientId';
 
   // Money
   static const String earnings = '/wallet/earnings';
@@ -62,8 +63,10 @@ abstract final class ApiRoutes {
   // Chat and video
   static const String chatThreads = '/chat/threads';
   static const String chatUnread = '/chat/unread-count';
-  static String joinCall(String appointmentId) => '/video-call/$appointmentId/join';
-  static String endCall(String appointmentId) => '/video-call/$appointmentId/end';
+  static String joinCall(String appointmentId) =>
+      '/video-call/$appointmentId/join';
+  static String endCall(String appointmentId) =>
+      '/video-call/$appointmentId/end';
 
   // Notifications
   static const String notifications = '/notifications';

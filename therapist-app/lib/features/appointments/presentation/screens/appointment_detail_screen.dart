@@ -60,8 +60,9 @@ class _AppointmentDetailScreenState
 
   @override
   Widget build(BuildContext context) {
-    final appointmentAsync =
-        ref.watch(appointmentDetailProvider(widget.appointmentId));
+    final appointmentAsync = ref.watch(
+      appointmentDetailProvider(widget.appointmentId),
+    );
     final repository = ref.read(appointmentsRepositoryProvider);
     final theme = Theme.of(context);
 
@@ -147,8 +148,9 @@ class _AppointmentDetailScreenState
                     _Row(
                       icon: Icons.event_outlined,
                       label: 'Date',
-                      value: DateFormat('d MMMM yyyy')
-                          .format(appointment.scheduledDate),
+                      value: DateFormat(
+                        'd MMMM yyyy',
+                      ).format(appointment.scheduledDate),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     _Row(
@@ -276,7 +278,8 @@ class _AppointmentDetailScreenState
                 label: 'View Patient History',
                 icon: Icons.folder_outlined,
                 variant: AppButtonVariant.outlined,
-                onPressed: () => context.go('/patients/${appointment.patientId}'),
+                onPressed: () =>
+                    context.go('/patients/${appointment.patientId}'),
               ),
             ],
 

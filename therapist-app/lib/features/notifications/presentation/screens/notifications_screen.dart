@@ -16,9 +16,9 @@ class NotificationsScreen extends ConsumerWidget {
   ({IconData icon, Color color}) _styleFor(String type, BuildContext context) {
     return switch (type) {
       'APPOINTMENT' => (
-          icon: Icons.event_available_outlined,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        icon: Icons.event_available_outlined,
+        color: Theme.of(context).colorScheme.primary,
+      ),
       'PAYMENT' => (icon: Icons.payments_outlined, color: AppColors.success),
       'CHAT' => (icon: Icons.chat_bubble_outline, color: AppColors.info),
       'OFFER' => (icon: Icons.local_offer_outlined, color: AppColors.warning),
@@ -34,22 +34,20 @@ class NotificationsScreen extends ConsumerWidget {
     NotificationModel notification,
   ) {
     if (!notification.isRead) {
-      ref
-          .read(notificationsRepositoryProvider)
-          .markRead(notification.id)
-          .then((_) {
+      ref.read(notificationsRepositoryProvider).markRead(notification.id).then((
+        _,
+      ) {
         ref.invalidate(notificationsProvider);
         ref.invalidate(unreadNotificationCountProvider);
       });
     }
 
-    final String? appointmentId = notification.data?['appointmentId'] as String?;
+    final String? appointmentId =
+        notification.data?['appointmentId'] as String?;
     final String? threadId = notification.data?['threadId'] as String?;
 
     if (appointmentId != null) {
-      context.go(
-        '/appointments/detail/$appointmentId',
-      );
+      context.go('/appointments/detail/$appointmentId');
     } else if (threadId != null) {
       context.go('/chat/thread/$threadId');
     }
@@ -155,10 +153,12 @@ class NotificationsScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            DateFormat('d MMM, h:mm a')
-                                .format(notification.createdAt),
-                            style: theme.textTheme.bodySmall
-                                ?.copyWith(fontSize: 10),
+                            DateFormat(
+                              'd MMM, h:mm a',
+                            ).format(notification.createdAt),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontSize: 10,
+                            ),
                           ),
                         ],
                       ),

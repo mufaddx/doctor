@@ -36,14 +36,15 @@ class ChatThreadSummary {
       participantUserId: participant?['id'] as String?,
       participantName: participant?['fullName'] as String? ?? 'Conversation',
       participantAvatarUrl: participant?['avatarUrl'] as String?,
-      specialization:
-          (specializations?.isNotEmpty ?? false) ? specializations!.first.toString() : null,
+      specialization: (specializations?.isNotEmpty ?? false)
+          ? specializations!.first.toString()
+          : null,
       // An attachment-only message still needs a label in the list
       lastMessage: lastMessage == null
           ? null
           : ((lastMessage['content'] as String?)?.isNotEmpty ?? false)
-              ? lastMessage['content'] as String
-              : 'Attachment',
+          ? lastMessage['content'] as String
+          : 'Attachment',
       unreadCount: json['unreadCount'] as int? ?? 0,
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );

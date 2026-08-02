@@ -64,7 +64,7 @@ class SocketService {
   final StreamController<ChatMessage> _messageController =
       StreamController<ChatMessage>.broadcast();
   final StreamController<({String threadId, String userId, bool isTyping})>
-      _typingController = StreamController.broadcast();
+  _typingController = StreamController.broadcast();
   final StreamController<({String userId, bool online})> _presenceController =
       StreamController.broadcast();
   final StreamController<bool> _connectionController =
@@ -121,12 +121,17 @@ class SocketService {
       })
       ..on('user:online', (data) {
         final map = Map<String, dynamic>.from(data as Map);
-        _presenceController.add((userId: map['userId'] as String, online: true));
+        _presenceController.add((
+          userId: map['userId'] as String,
+          online: true,
+        ));
       })
       ..on('user:offline', (data) {
         final map = Map<String, dynamic>.from(data as Map);
-        _presenceController
-            .add((userId: map['userId'] as String, online: false));
+        _presenceController.add((
+          userId: map['userId'] as String,
+          online: false,
+        ));
       });
 
     _socket!.connect();

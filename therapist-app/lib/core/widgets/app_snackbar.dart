@@ -9,12 +9,12 @@ abstract final class AppSnackbar {
       _show(context, message, AppColors.success, Icons.check_circle_outline);
 
   static void error(BuildContext context, String message) => _show(
-        context,
-        message,
-        AppColors.danger,
-        Icons.error_outline,
-        duration: const Duration(seconds: 5),
-      );
+    context,
+    message,
+    AppColors.danger,
+    Icons.error_outline,
+    duration: const Duration(seconds: 5),
+  );
 
   static void info(BuildContext context, String message) =>
       _show(context, message, AppColors.info, Icons.info_outline);

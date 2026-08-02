@@ -30,13 +30,13 @@ class BankDetail {
   final String? upiId;
 
   factory BankDetail.fromJson(Map<String, dynamic> json) => BankDetail(
-        accountHolder: json['accountHolder'] as String? ?? '',
-        accountNumber: json['accountNumber'] as String? ?? '',
-        ifscCode: json['ifscCode'] as String? ?? '',
-        bankName: json['bankName'] as String? ?? '',
-        verified: json['verified'] as bool? ?? false,
-        upiId: json['upiId'] as String?,
-      );
+    accountHolder: json['accountHolder'] as String? ?? '',
+    accountNumber: json['accountNumber'] as String? ?? '',
+    ifscCode: json['ifscCode'] as String? ?? '',
+    bankName: json['bankName'] as String? ?? '',
+    verified: json['verified'] as bool? ?? false,
+    upiId: json['upiId'] as String?,
+  );
 }
 
 final bankDetailProvider = FutureProvider.autoDispose<BankDetail?>((ref) async {
@@ -97,17 +97,19 @@ class _BankDetailsScreenState extends ConsumerState<BankDetailsScreen> {
     setState(() => _isSaving = true);
 
     try {
-      await ref.read(apiClientProvider).post(
-        ApiRoutes.bankDetails,
-        body: {
-          'accountHolder': _holderController.text.trim(),
-          'accountNumber': _accountController.text.trim(),
-          'ifscCode': _ifscController.text.trim().toUpperCase(),
-          'bankName': _bankNameController.text.trim(),
-          if (_upiController.text.trim().isNotEmpty)
-            'upiId': _upiController.text.trim(),
-        },
-      );
+      await ref
+          .read(apiClientProvider)
+          .post(
+            ApiRoutes.bankDetails,
+            body: {
+              'accountHolder': _holderController.text.trim(),
+              'accountNumber': _accountController.text.trim(),
+              'ifscCode': _ifscController.text.trim().toUpperCase(),
+              'bankName': _bankNameController.text.trim(),
+              if (_upiController.text.trim().isNotEmpty)
+                'upiId': _upiController.text.trim(),
+            },
+          );
 
       ref.invalidate(bankDetailProvider);
 
@@ -152,10 +154,9 @@ class _BankDetailsScreenState extends ConsumerState<BankDetailsScreen> {
                 Container(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
-                    color: (bank.verified
-                            ? AppColors.success
-                            : AppColors.warning)
-                        .withValues(alpha: 0.1),
+                    color:
+                        (bank.verified ? AppColors.success : AppColors.warning)
+                            .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                   ),
                   child: Row(
@@ -273,8 +274,8 @@ class _BankDetailsScreenState extends ConsumerState<BankDetailsScreen> {
                   // number must be entered twice
                   validator: (value) =>
                       value?.trim() != _accountController.text.trim()
-                          ? 'Account numbers do not match'
-                          : null,
+                      ? 'Account numbers do not match'
+                      : null,
                 ),
 
                 const SizedBox(height: AppSpacing.md),
@@ -358,8 +359,9 @@ class _DetailRow extends StatelessWidget {
           child: Text(
             value,
             textAlign: TextAlign.right,
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w600),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],

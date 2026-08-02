@@ -19,10 +19,10 @@ class ScheduleTile extends StatelessWidget {
   final VoidCallback? onJoinCall;
 
   Color _accentColor(BuildContext context) => switch (appointment.type) {
-        'VIDEO_CONSULTATION' => AppColors.info,
-        'HOME_VISIT' => AppColors.warning,
-        _ => Theme.of(context).colorScheme.primary,
-      };
+    'VIDEO_CONSULTATION' => AppColors.info,
+    'HOME_VISIT' => AppColors.warning,
+    _ => Theme.of(context).colorScheme.primary,
+  };
 
   @override
   Widget build(BuildContext context) {

@@ -61,14 +61,14 @@ class PayoutRecord {
   final DateTime? processedAt;
 
   factory PayoutRecord.fromJson(Map<String, dynamic> json) => PayoutRecord(
-        id: json['id'] as String,
-        amount: double.tryParse('${json['amount'] ?? 0}') ?? 0,
-        status: json['status'] as String? ?? 'PENDING',
-        createdAt: DateTime.parse(json['createdAt'] as String),
-        processedAt: json['processedAt'] == null
-            ? null
-            : DateTime.parse(json['processedAt'] as String),
-      );
+    id: json['id'] as String,
+    amount: double.tryParse('${json['amount'] ?? 0}') ?? 0,
+    status: json['status'] as String? ?? 'PENDING',
+    createdAt: DateTime.parse(json['createdAt'] as String),
+    processedAt: json['processedAt'] == null
+        ? null
+        : DateTime.parse(json['processedAt'] as String),
+  );
 }
 
 class EarningsRepository {
@@ -101,7 +101,9 @@ final earningsRepositoryProvider = Provider<EarningsRepository>((ref) {
   return EarningsRepository(ref.watch(apiClientProvider));
 });
 
-final selectedPeriodProvider = StateProvider.autoDispose<String>((ref) => 'daily');
+final selectedPeriodProvider = StateProvider.autoDispose<String>(
+  (ref) => 'daily',
+);
 
 final earningsProvider = FutureProvider.autoDispose<EarningsSummary>((ref) {
   final String period = ref.watch(selectedPeriodProvider);

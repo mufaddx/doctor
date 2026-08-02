@@ -15,9 +15,9 @@ import '../../../appointments/presentation/providers/appointments_provider.dart'
 /// text state when the list is reordered or an entry above it is removed.
 class _MedicineEntry {
   _MedicineEntry()
-      : nameController = TextEditingController(),
-        dosageController = TextEditingController(),
-        frequencyController = TextEditingController();
+    : nameController = TextEditingController(),
+      dosageController = TextEditingController(),
+      frequencyController = TextEditingController();
 
   final TextEditingController nameController;
   final TextEditingController dosageController;
@@ -28,11 +28,11 @@ class _MedicineEntry {
       dosageController.text.trim().isNotEmpty;
 
   Map<String, String> toJson() => {
-        'name': nameController.text.trim(),
-        'dosage': dosageController.text.trim(),
-        if (frequencyController.text.trim().isNotEmpty)
-          'frequency': frequencyController.text.trim(),
-      };
+    'name': nameController.text.trim(),
+    'dosage': dosageController.text.trim(),
+    if (frequencyController.text.trim().isNotEmpty)
+      'frequency': frequencyController.text.trim(),
+  };
 
   void dispose() {
     nameController.dispose();
@@ -90,21 +90,26 @@ class _WritePrescriptionScreenState
     setState(() => _isSaving = true);
 
     try {
-      await ref.read(apiClientProvider).post(
-        ApiRoutes.prescriptions,
-        body: {
-          'appointmentId': widget.appointmentId,
-          'diagnosis': diagnosis,
-          if (_adviceController.text.trim().isNotEmpty)
-            'advice': _adviceController.text.trim(),
-          'medicines': filled.map((medicine) => medicine.toJson()).toList(),
-        },
-      );
+      await ref
+          .read(apiClientProvider)
+          .post(
+            ApiRoutes.prescriptions,
+            body: {
+              'appointmentId': widget.appointmentId,
+              'diagnosis': diagnosis,
+              if (_adviceController.text.trim().isNotEmpty)
+                'advice': _adviceController.text.trim(),
+              'medicines': filled.map((medicine) => medicine.toJson()).toList(),
+            },
+          );
 
       ref.invalidate(appointmentDetailProvider(widget.appointmentId));
 
       if (!mounted) return;
-      AppSnackbar.success(context, 'Prescription saved and sent to the patient');
+      AppSnackbar.success(
+        context,
+        'Prescription saved and sent to the patient',
+      );
       context.pop();
     } on ApiException catch (error) {
       if (!mounted) return;
@@ -115,8 +120,9 @@ class _WritePrescriptionScreenState
 
   @override
   Widget build(BuildContext context) {
-    final appointmentAsync =
-        ref.watch(appointmentDetailProvider(widget.appointmentId));
+    final appointmentAsync = ref.watch(
+      appointmentDetailProvider(widget.appointmentId),
+    );
     final theme = Theme.of(context);
 
     return Scaffold(

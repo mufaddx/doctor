@@ -51,8 +51,9 @@ class NotificationsRepository {
   }
 
   Future<int> unreadCount() async {
-    final data =
-        await _api.get<Map<String, dynamic>>(ApiRoutes.notificationsUnread);
+    final data = await _api.get<Map<String, dynamic>>(
+      ApiRoutes.notificationsUnread,
+    );
     return data['count'] as int? ?? 0;
   }
 
@@ -66,7 +67,8 @@ class NotificationsRepository {
       _api.delete('${ApiRoutes.notifications}/$id');
 }
 
-final notificationsRepositoryProvider =
-    Provider<NotificationsRepository>((ref) {
+final notificationsRepositoryProvider = Provider<NotificationsRepository>((
+  ref,
+) {
   return NotificationsRepository(ref.watch(apiClientProvider));
 });

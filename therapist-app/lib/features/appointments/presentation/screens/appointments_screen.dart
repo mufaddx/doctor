@@ -185,7 +185,8 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                 }
 
                 return RefreshIndicator(
-                  onRefresh: () async => ref.invalidate(appointmentsProvider(tab)),
+                  onRefresh: () async =>
+                      ref.invalidate(appointmentsProvider(tab)),
                   child: ListView.separated(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     itemCount: appointments.length,
@@ -197,11 +198,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                       return _AppointmentCard(
                         appointment: appointment,
                         isBusy: _busyAppointmentId == appointment.id,
-                        onTap: () =>
-                            context.go('/appointments/detail/${appointment.id}'),
+                        onTap: () => context.go(
+                          '/appointments/detail/${appointment.id}',
+                        ),
                         onAccept: () => _accept(appointment),
                         onReject: () => _reject(appointment),
-                        onJoinCall: () => context.push('/call/${appointment.id}'),
+                        onJoinCall: () =>
+                            context.push('/call/${appointment.id}'),
                       );
                     },
                   ),
@@ -233,20 +236,20 @@ class _AppointmentCard extends StatelessWidget {
   final VoidCallback onJoinCall;
 
   Color _statusColor(BuildContext context) => switch (appointment.status) {
-        'CONFIRMED' => AppColors.success,
-        'PENDING' => AppColors.warning,
-        'IN_PROGRESS' => AppColors.info,
-        'COMPLETED' => Theme.of(context).colorScheme.primary,
-        'CANCELLED' || 'REJECTED' => AppColors.danger,
-        _ => Colors.grey,
-      };
+    'CONFIRMED' => AppColors.success,
+    'PENDING' => AppColors.warning,
+    'IN_PROGRESS' => AppColors.info,
+    'COMPLETED' => Theme.of(context).colorScheme.primary,
+    'CANCELLED' || 'REJECTED' => AppColors.danger,
+    _ => Colors.grey,
+  };
 
   IconData get _typeIcon => switch (appointment.type) {
-        'CLINIC_VISIT' => Icons.local_hospital_outlined,
-        'HOME_VISIT' => Icons.home_outlined,
-        'VIDEO_CONSULTATION' => Icons.videocam_outlined,
-        _ => Icons.event_outlined,
-      };
+    'CLINIC_VISIT' => Icons.local_hospital_outlined,
+    'HOME_VISIT' => Icons.home_outlined,
+    'VIDEO_CONSULTATION' => Icons.videocam_outlined,
+    _ => Icons.event_outlined,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -265,8 +268,10 @@ class _AppointmentCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: statusColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(6),
@@ -337,8 +342,9 @@ class _AppointmentCard extends StatelessWidget {
                       if (appointment.isPaid)
                         Text(
                           'Paid',
-                          style: theme.textTheme.bodySmall
-                              ?.copyWith(color: AppColors.success),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppColors.success,
+                          ),
                         ),
                     ],
                   ),

@@ -116,7 +116,9 @@ class AuthRepository {
   }
 
   Future<TherapistUser> signInWithGoogle() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: ['email', 'profile'],
+    );
     await googleSignIn.signOut();
 
     final GoogleSignInAccount? account = await googleSignIn.signIn();
@@ -124,13 +126,13 @@ class AuthRepository {
 
     final GoogleSignInAuthentication auth = await account.authentication;
 
-    final fb.UserCredential credential =
-        await fb.FirebaseAuth.instance.signInWithCredential(
-      fb.GoogleAuthProvider.credential(
-        idToken: auth.idToken,
-        accessToken: auth.accessToken,
-      ),
-    );
+    final fb.UserCredential credential = await fb.FirebaseAuth.instance
+        .signInWithCredential(
+          fb.GoogleAuthProvider.credential(
+            idToken: auth.idToken,
+            accessToken: auth.accessToken,
+          ),
+        );
 
     final String? idToken = await credential.user?.getIdToken();
     if (idToken == null) throw ApiException('Could not obtain a Google token');
@@ -155,21 +157,20 @@ class AuthRepository {
   }
 
   Future<void> forgotPassword(String phone) => _api.post(
-        ApiRoutes.forgotPassword,
-        body: {'phone': phone},
-        skipAuth: true,
-      );
+    ApiRoutes.forgotPassword,
+    body: {'phone': phone},
+    skipAuth: true,
+  );
 
   Future<void> resetPassword({
     required String phone,
     required String otp,
     required String newPassword,
-  }) =>
-      _api.post(
-        ApiRoutes.resetPassword,
-        body: {'phone': phone, 'otp': otp, 'newPassword': newPassword},
-        skipAuth: true,
-      );
+  }) => _api.post(
+    ApiRoutes.resetPassword,
+    body: {'phone': phone, 'otp': otp, 'newPassword': newPassword},
+    skipAuth: true,
+  );
 
   Future<void> registerFcmToken(String token) =>
       _api.post(ApiRoutes.fcmToken, body: {'token': token});

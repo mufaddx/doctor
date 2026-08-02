@@ -91,11 +91,13 @@ class AvailabilityRepository {
       ApiRoutes.availability,
       body: {
         'slots': slots
-            .map((slot) => {
-                  'dayOfWeek': slot.dayOfWeek,
-                  'startTime': slot.startTime,
-                  'endTime': slot.endTime,
-                })
+            .map(
+              (slot) => {
+                'dayOfWeek': slot.dayOfWeek,
+                'startTime': slot.startTime,
+                'endTime': slot.endTime,
+              },
+            )
             .toList(),
       },
     );
@@ -110,7 +112,8 @@ final availabilityRepositoryProvider = Provider<AvailabilityRepository>((ref) {
   return AvailabilityRepository(ref.watch(apiClientProvider));
 });
 
-final availabilityProvider =
-    FutureProvider.autoDispose<List<AvailabilitySlot>>((ref) {
-  return ref.watch(availabilityRepositoryProvider).list();
-});
+final availabilityProvider = FutureProvider.autoDispose<List<AvailabilitySlot>>(
+  (ref) {
+    return ref.watch(availabilityRepositoryProvider).list();
+  },
+);

@@ -58,7 +58,10 @@ class _VideoCallScreenState extends ConsumerState<VideoCallScreen> {
   Future<void> _startCall() async {
     try {
       // Camera and microphone must be granted before the engine initialises
-      final statuses = await [Permission.camera, Permission.microphone].request();
+      final statuses = await [
+        Permission.camera,
+        Permission.microphone,
+      ].request();
 
       if (statuses[Permission.camera] != PermissionStatus.granted ||
           statuses[Permission.microphone] != PermissionStatus.granted) {
@@ -146,8 +149,9 @@ class _VideoCallScreenState extends ConsumerState<VideoCallScreen> {
 
   Future<void> _renewToken() async {
     try {
-      final credentials =
-          await ref.read(videoCallRepositoryProvider).renewToken(widget.appointmentId);
+      final credentials = await ref
+          .read(videoCallRepositoryProvider)
+          .renewToken(widget.appointmentId);
       await _engine?.renewToken(credentials.token);
     } catch (_) {
       // The call continues on the existing token until it actually expires
@@ -247,8 +251,11 @@ class _VideoCallScreenState extends ConsumerState<VideoCallScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.videocam_off_outlined,
-                size: 56, color: Colors.white54),
+            const Icon(
+              Icons.videocam_off_outlined,
+              size: 56,
+              color: Colors.white54,
+            ),
             const SizedBox(height: AppSpacing.md),
             Text(
               _errorMessage!,
@@ -288,8 +295,10 @@ class _VideoCallScreenState extends ConsumerState<VideoCallScreen> {
               child: _isCameraOff || _engine == null
                   ? Container(
                       color: Colors.grey.shade900,
-                      child: const Icon(Icons.videocam_off,
-                          color: Colors.white54),
+                      child: const Icon(
+                        Icons.videocam_off,
+                        color: Colors.white54,
+                      ),
                     )
                   : AgoraVideoView(
                       controller: VideoViewController(
@@ -434,8 +443,7 @@ class _ControlButton extends StatelessWidget {
             width: 54,
             height: 54,
             decoration: BoxDecoration(
-              color: background ??
-                  (active ? Colors.white : Colors.white24),
+              color: background ?? (active ? Colors.white : Colors.white24),
               shape: BoxShape.circle,
             ),
             child: Icon(

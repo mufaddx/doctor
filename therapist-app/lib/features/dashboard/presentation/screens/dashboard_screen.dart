@@ -149,12 +149,14 @@ class DashboardScreen extends ConsumerWidget {
                   value: user?.isAvailable ?? false,
                   onChanged: user == null || !user.isVerified
                       ? null
-                      : (value) =>
-                          ref.read(authProvider.notifier).setAvailability(value),
+                      : (value) => ref
+                            .read(authProvider.notifier)
+                            .setAvailability(value),
                   title: Text(
                     'Accepting new bookings',
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   subtitle: Text(
                     'Turn this off when you are on leave',
@@ -170,7 +172,8 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.md),
 
               statsAsync.when(
-                loading: () => const AppListSkeleton(itemCount: 2, itemHeight: 78),
+                loading: () =>
+                    const AppListSkeleton(itemCount: 2, itemHeight: 78),
                 error: (error, _) => AppErrorView(
                   message: error.toString(),
                   onRetry: () => ref.invalidate(dashboardStatsProvider),
@@ -231,7 +234,8 @@ class DashboardScreen extends ConsumerWidget {
               ),
 
               scheduleAsync.when(
-                loading: () => const AppListSkeleton(itemCount: 3, itemHeight: 76),
+                loading: () =>
+                    const AppListSkeleton(itemCount: 3, itemHeight: 76),
                 error: (error, _) => AppErrorView(
                   message: error.toString(),
                   onRetry: () => ref.invalidate(todayScheduleProvider),
@@ -319,7 +323,9 @@ class _StatCard extends StatelessWidget {
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: tint.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radiusSm,
+                        ),
                       ),
                       child: Icon(icon, size: 16, color: tint),
                     ),

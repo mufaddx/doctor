@@ -142,12 +142,13 @@ class ApiClient {
       }
 
       // A bare Dio instance avoids re-entering this interceptor chain
-      final Response response = await Dio(
-        BaseOptions(baseUrl: AppConfig.apiBaseUrl),
-      ).post<Map<String, dynamic>>(
-        '/auth/refresh',
-        data: {'refreshToken': refreshToken},
-      );
+      final Response response =
+          await Dio(
+            BaseOptions(baseUrl: AppConfig.apiBaseUrl),
+          ).post<Map<String, dynamic>>(
+            '/auth/refresh',
+            data: {'refreshToken': refreshToken},
+          );
 
       final Map<String, dynamic> data =
           response.data!['data'] as Map<String, dynamic>;
@@ -176,41 +177,36 @@ class ApiClient {
     String path, {
     Map<String, dynamic>? query,
     bool skipAuth = false,
-  }) =>
-      _request<T>(
-        () => _dio.get<Map<String, dynamic>>(
-          path,
-          queryParameters: query,
-          options: Options(extra: {'skipAuth': skipAuth}),
-        ),
-      );
+  }) => _request<T>(
+    () => _dio.get<Map<String, dynamic>>(
+      path,
+      queryParameters: query,
+      options: Options(extra: {'skipAuth': skipAuth}),
+    ),
+  );
 
   Future<T> post<T>(
     String path, {
     Object? body,
     Map<String, dynamic>? query,
     bool skipAuth = false,
-  }) =>
-      _request<T>(
-        () => _dio.post<Map<String, dynamic>>(
-          path,
-          data: body,
-          queryParameters: query,
-          options: Options(extra: {'skipAuth': skipAuth}),
-        ),
-      );
+  }) => _request<T>(
+    () => _dio.post<Map<String, dynamic>>(
+      path,
+      data: body,
+      queryParameters: query,
+      options: Options(extra: {'skipAuth': skipAuth}),
+    ),
+  );
 
-  Future<T> patch<T>(String path, {Object? body}) => _request<T>(
-        () => _dio.patch<Map<String, dynamic>>(path, data: body),
-      );
+  Future<T> patch<T>(String path, {Object? body}) =>
+      _request<T>(() => _dio.patch<Map<String, dynamic>>(path, data: body));
 
-  Future<T> put<T>(String path, {Object? body}) => _request<T>(
-        () => _dio.put<Map<String, dynamic>>(path, data: body),
-      );
+  Future<T> put<T>(String path, {Object? body}) =>
+      _request<T>(() => _dio.put<Map<String, dynamic>>(path, data: body));
 
-  Future<T> delete<T>(String path, {Object? body}) => _request<T>(
-        () => _dio.delete<Map<String, dynamic>>(path, data: body),
-      );
+  Future<T> delete<T>(String path, {Object? body}) =>
+      _request<T>(() => _dio.delete<Map<String, dynamic>>(path, data: body));
 
   /// Multipart upload used for avatars, certificates and chat attachments.
   Future<T> upload<T>(
@@ -218,15 +214,14 @@ class ApiClient {
     required String filePath,
     String field = 'file',
     Map<String, dynamic>? fields,
-  }) =>
-      _request<T>(() async {
-        final FormData formData = FormData.fromMap({
-          ...?fields,
-          field: await MultipartFile.fromFile(filePath),
-        });
+  }) => _request<T>(() async {
+    final FormData formData = FormData.fromMap({
+      ...?fields,
+      field: await MultipartFile.fromFile(filePath),
+    });
 
-        return _dio.post<Map<String, dynamic>>(path, data: formData);
-      });
+    return _dio.post<Map<String, dynamic>>(path, data: formData);
+  });
 
   /// Unwraps the `{ success, data }` envelope the API returns and converts
   /// any failure into an [ApiException].

@@ -174,12 +174,12 @@ class _OverviewTab extends StatelessWidget {
     final PatientAppointment? upcoming = patient.appointments
         .where((a) => a.status == 'CONFIRMED' || a.status == 'PENDING')
         .fold<PatientAppointment?>(null, (earliest, appointment) {
-      // Keep the soonest upcoming appointment
-      if (earliest == null) return appointment;
-      return appointment.scheduledDate.isBefore(earliest.scheduledDate)
-          ? appointment
-          : earliest;
-    });
+          // Keep the soonest upcoming appointment
+          if (earliest == null) return appointment;
+          return appointment.scheduledDate.isBefore(earliest.scheduledDate)
+              ? appointment
+              : earliest;
+        });
 
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -215,8 +215,9 @@ class _OverviewTab extends StatelessWidget {
                   label: 'Last Appointment',
                   value: patient.appointments.isEmpty
                       ? '—'
-                      : DateFormat('d MMM yyyy')
-                          .format(patient.appointments.first.scheduledDate),
+                      : DateFormat(
+                          'd MMM yyyy',
+                        ).format(patient.appointments.first.scheduledDate),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 _InfoRow(
@@ -279,8 +280,9 @@ class _HistoryTab extends StatelessWidget {
           child: ListTile(
             title: Text(
               appointment.problem ?? _readableType(appointment.type),
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
             subtitle: Text(
               '${DateFormat('d MMM yyyy').format(appointment.scheduledDate)} · ${appointment.startTime}',
@@ -293,8 +295,8 @@ class _HistoryTab extends StatelessWidget {
                 color: appointment.status == 'COMPLETED'
                     ? AppColors.success
                     : (appointment.status == 'CANCELLED'
-                        ? AppColors.danger
-                        : theme.colorScheme.primary),
+                          ? AppColors.danger
+                          : theme.colorScheme.primary),
               ),
             ),
           ),
@@ -304,11 +306,11 @@ class _HistoryTab extends StatelessWidget {
   }
 
   String _readableType(String type) => switch (type) {
-        'CLINIC_VISIT' => 'Clinic Visit',
-        'HOME_VISIT' => 'Home Visit',
-        'VIDEO_CONSULTATION' => 'Video Consultation',
-        _ => type,
-      };
+    'CLINIC_VISIT' => 'Clinic Visit',
+    'HOME_VISIT' => 'Home Visit',
+    'VIDEO_CONSULTATION' => 'Video Consultation',
+    _ => type,
+  };
 }
 
 class _PrescriptionsTab extends StatelessWidget {
@@ -360,10 +362,7 @@ class _PrescriptionsTab extends StatelessWidget {
                 if (prescription.advice != null &&
                     prescription.advice!.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    prescription.advice!,
-                    style: theme.textTheme.bodySmall,
-                  ),
+                  Text(prescription.advice!, style: theme.textTheme.bodySmall),
                 ],
 
                 if (prescription.medicines.isNotEmpty) ...[
@@ -426,7 +425,9 @@ class _ProgressTab extends StatelessWidget {
         return Card(
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: _painColor(entry.painLevel).withValues(alpha: 0.15),
+              backgroundColor: _painColor(
+                entry.painLevel,
+              ).withValues(alpha: 0.15),
               child: Text(
                 '${entry.painLevel}',
                 style: TextStyle(
@@ -448,11 +449,7 @@ class _ProgressTab extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    this.valueColor,
-  });
+  const _InfoRow({required this.label, required this.value, this.valueColor});
 
   final String label;
   final String value;

@@ -37,8 +37,8 @@ class PushNotificationService {
     FirebaseMessaging.onMessageOpenedApp.listen(_handleTap);
 
     // A notification that cold-started the app arrives here instead
-    final RemoteMessage? initial =
-        await FirebaseMessaging.instance.getInitialMessage();
+    final RemoteMessage? initial = await FirebaseMessaging.instance
+        .getInitialMessage();
     if (initial != null) _handleTap(initial);
 
     // Tokens rotate; re-register whenever that happens
@@ -55,10 +55,10 @@ class PushNotificationService {
     // iOS needs this to show banners while the app is open
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
   Future<void> _setupLocalNotifications() async {
@@ -78,7 +78,8 @@ class PushNotificationService {
 
     await _local
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(_channel);
   }
 
@@ -118,6 +119,8 @@ class PushNotificationService {
   }
 }
 
-final pushNotificationServiceProvider = Provider<PushNotificationService>((ref) {
+final pushNotificationServiceProvider = Provider<PushNotificationService>((
+  ref,
+) {
   return PushNotificationService(ref.watch(apiClientProvider));
 });

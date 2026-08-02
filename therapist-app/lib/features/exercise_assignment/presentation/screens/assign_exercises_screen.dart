@@ -32,8 +32,7 @@ class AssignExercisesScreen extends ConsumerStatefulWidget {
       _AssignExercisesScreenState();
 }
 
-class _AssignExercisesScreenState
-    extends ConsumerState<AssignExercisesScreen> {
+class _AssignExercisesScreenState extends ConsumerState<AssignExercisesScreen> {
   final TextEditingController _conditionController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
 
@@ -75,20 +74,26 @@ class _AssignExercisesScreenState
     setState(() => _isSaving = true);
 
     try {
-      await ref.read(apiClientProvider).post(
-        ApiRoutes.assignExercises,
-        body: {
-          'patientId': widget.patientId,
-          'condition': condition,
-          'painLevel': _painLevel.round(),
-          if (_notesController.text.trim().isNotEmpty)
-            'notes': _notesController.text.trim(),
-          'exercises': _selected.values
-              .map((item) =>
-                  {'exerciseId': item.exercise.id, 'sets': item.sets})
-              .toList(),
-        },
-      );
+      await ref
+          .read(apiClientProvider)
+          .post(
+            ApiRoutes.assignExercises,
+            body: {
+              'patientId': widget.patientId,
+              'condition': condition,
+              'painLevel': _painLevel.round(),
+              if (_notesController.text.trim().isNotEmpty)
+                'notes': _notesController.text.trim(),
+              'exercises': _selected.values
+                  .map(
+                    (item) => {
+                      'exerciseId': item.exercise.id,
+                      'sets': item.sets,
+                    },
+                  )
+                  .toList(),
+            },
+          );
 
       if (!mounted) return;
       AppSnackbar.success(context, 'Exercise plan sent to the patient');
@@ -170,10 +175,7 @@ class _AssignExercisesScreenState
 
                 const SizedBox(height: AppSpacing.md),
 
-                Text(
-                  'Select Exercises',
-                  style: theme.textTheme.titleMedium,
-                ),
+                Text('Select Exercises', style: theme.textTheme.titleMedium),
                 const SizedBox(height: AppSpacing.sm),
 
                 categoriesAsync.maybeWhen(
@@ -194,17 +196,20 @@ class _AssignExercisesScreenState
                                   ? Colors.white
                                   : null,
                             ),
-                            onSelected: (_) => ref
-                                .read(selectedCategoryProvider.notifier)
-                                .state = null,
+                            onSelected: (_) =>
+                                ref
+                                        .read(selectedCategoryProvider.notifier)
+                                        .state =
+                                    null,
                           ),
                         ),
                         ...categories.map((category) {
                           final bool isSelected = selectedCategory == category;
 
                           return Padding(
-                            padding:
-                                const EdgeInsets.only(right: AppSpacing.sm),
+                            padding: const EdgeInsets.only(
+                              right: AppSpacing.sm,
+                            ),
                             child: ChoiceChip(
                               label: Text(category),
                               selected: isSelected,
@@ -213,9 +218,13 @@ class _AssignExercisesScreenState
                                 fontSize: 12,
                                 color: isSelected ? Colors.white : null,
                               ),
-                              onSelected: (_) => ref
-                                  .read(selectedCategoryProvider.notifier)
-                                  .state = category,
+                              onSelected: (_) =>
+                                  ref
+                                          .read(
+                                            selectedCategoryProvider.notifier,
+                                          )
+                                          .state =
+                                      category,
                             ),
                           );
                         }),
@@ -243,7 +252,8 @@ class _AssignExercisesScreenState
 
                     return Column(
                       children: exercises.map((exercise) {
-                        final _SelectedExercise? picked = _selected[exercise.id];
+                        final _SelectedExercise? picked =
+                            _selected[exercise.id];
                         final bool isPicked = picked != null;
 
                         return Card(
@@ -251,8 +261,9 @@ class _AssignExercisesScreenState
                           child: Column(
                             children: [
                               ListTile(
-                                contentPadding:
-                                    const EdgeInsets.all(AppSpacing.sm),
+                                contentPadding: const EdgeInsets.all(
+                                  AppSpacing.sm,
+                                ),
                                 leading: ClipRRect(
                                   borderRadius: BorderRadius.circular(
                                     AppSpacing.radiusSm,
@@ -275,8 +286,8 @@ class _AssignExercisesScreenState
                                             fit: BoxFit.cover,
                                             errorWidget: (_, __, ___) =>
                                                 Container(
-                                              color: theme.dividerColor,
-                                            ),
+                                                  color: theme.dividerColor,
+                                                ),
                                           ),
                                   ),
                                 ),
@@ -322,11 +333,9 @@ class _AssignExercisesScreenState
                                         onPressed: picked.sets <= 1
                                             ? null
                                             : () => setState(() {
-                                                  _selected[exercise.id] =
-                                                      picked.withSets(
-                                                    picked.sets - 1,
-                                                  );
-                                                }),
+                                                _selected[exercise.id] = picked
+                                                    .withSets(picked.sets - 1);
+                                              }),
                                       ),
                                       Text(
                                         '${picked.sets}',
@@ -340,11 +349,9 @@ class _AssignExercisesScreenState
                                         onPressed: picked.sets >= 20
                                             ? null
                                             : () => setState(() {
-                                                  _selected[exercise.id] =
-                                                      picked.withSets(
-                                                    picked.sets + 1,
-                                                  );
-                                                }),
+                                                _selected[exercise.id] = picked
+                                                    .withSets(picked.sets + 1);
+                                              }),
                                       ),
                                     ],
                                   ),

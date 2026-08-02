@@ -14,7 +14,8 @@ class SettingsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     // "System" follows the OS, so the switch reflects what is actually shown
-    final bool isDarkActive = themeMode == ThemeMode.dark ||
+    final bool isDarkActive =
+        themeMode == ThemeMode.dark ||
         (themeMode == ThemeMode.system &&
             MediaQuery.platformBrightnessOf(context) == Brightness.dark);
 

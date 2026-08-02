@@ -8,10 +8,11 @@ import '../../data/chat_repository.dart';
 export '../../data/chat_repository.dart' show chatRepositoryProvider;
 
 /// Conversation list.
-final chatThreadsProvider =
-    FutureProvider.autoDispose<List<ChatThreadSummary>>((ref) {
-  return ref.watch(chatRepositoryProvider).threads();
-});
+final chatThreadsProvider = FutureProvider.autoDispose<List<ChatThreadSummary>>(
+  (ref) {
+    return ref.watch(chatRepositoryProvider).threads();
+  },
+);
 
 /// Drives the badge on the bottom navigation bar.
 final unreadChatCountProvider = FutureProvider<int>((ref) {
@@ -54,7 +55,7 @@ class ThreadState {
 /// Merges the REST history with the live socket stream for one conversation.
 class ThreadNotifier extends StateNotifier<ThreadState> {
   ThreadNotifier(this._repository, this._socket, this._threadId)
-      : super(const ThreadState()) {
+    : super(const ThreadState()) {
     _initialise();
   }
 
@@ -64,7 +65,7 @@ class ThreadNotifier extends StateNotifier<ThreadState> {
 
   StreamSubscription<ChatMessage>? _messageSub;
   StreamSubscription<({String threadId, String userId, bool isTyping})>?
-      _typingSub;
+  _typingSub;
   StreamSubscription<bool>? _connectionSub;
   Timer? _typingResetTimer;
 
@@ -162,9 +163,9 @@ class ThreadNotifier extends StateNotifier<ThreadState> {
 
 final threadProvider = StateNotifierProvider.autoDispose
     .family<ThreadNotifier, ThreadState, String>((ref, threadId) {
-  return ThreadNotifier(
-    ref.watch(chatRepositoryProvider),
-    ref.watch(socketServiceProvider),
-    threadId,
-  );
-});
+      return ThreadNotifier(
+        ref.watch(chatRepositoryProvider),
+        ref.watch(socketServiceProvider),
+        threadId,
+      );
+    });

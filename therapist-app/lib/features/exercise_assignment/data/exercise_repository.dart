@@ -25,17 +25,17 @@ class ExerciseModel {
   final List<String> instructions;
 
   factory ExerciseModel.fromJson(Map<String, dynamic> json) => ExerciseModel(
-        id: json['id'] as String,
-        title: json['title'] as String,
-        category: json['category'] as String? ?? '',
-        level: json['level'] as String? ?? 'Beginner',
-        durationMinutes: json['durationMinutes'] as int? ?? 0,
-        videoUrl: json['videoUrl'] as String? ?? '',
-        thumbnailUrl: json['thumbnailUrl'] as String?,
-        instructions: (json['instructions'] as List<dynamic>? ?? [])
-            .map((e) => e.toString())
-            .toList(),
-      );
+    id: json['id'] as String,
+    title: json['title'] as String,
+    category: json['category'] as String? ?? '',
+    level: json['level'] as String? ?? 'Beginner',
+    durationMinutes: json['durationMinutes'] as int? ?? 0,
+    videoUrl: json['videoUrl'] as String? ?? '',
+    thumbnailUrl: json['thumbnailUrl'] as String?,
+    instructions: (json['instructions'] as List<dynamic>? ?? [])
+        .map((e) => e.toString())
+        .toList(),
+  );
 }
 
 class ExerciseRepository {
@@ -46,10 +46,7 @@ class ExerciseRepository {
   Future<List<ExerciseModel>> library({String? category}) async {
     final data = await _api.get<Map<String, dynamic>>(
       ApiRoutes.exercises,
-      query: {
-        'limit': 50,
-        if (category != null) 'category': category,
-      },
+      query: {'limit': 50, if (category != null) 'category': category},
     );
 
     return (data['items'] as List<dynamic>)
@@ -70,15 +67,19 @@ final exerciseRepositoryProvider = Provider<ExerciseRepository>((ref) {
   return ExerciseRepository(ref.watch(apiClientProvider));
 });
 
-final selectedCategoryProvider = StateProvider.autoDispose<String?>((ref) => null);
+final selectedCategoryProvider = StateProvider.autoDispose<String?>(
+  (ref) => null,
+);
 
-final exerciseCategoriesProvider =
-    FutureProvider.autoDispose<List<String>>((ref) {
+final exerciseCategoriesProvider = FutureProvider.autoDispose<List<String>>((
+  ref,
+) {
   return ref.watch(exerciseRepositoryProvider).categories();
 });
 
-final exerciseLibraryProvider =
-    FutureProvider.autoDispose<List<ExerciseModel>>((ref) {
-  final String? category = ref.watch(selectedCategoryProvider);
-  return ref.watch(exerciseRepositoryProvider).library(category: category);
-});
+final exerciseLibraryProvider = FutureProvider.autoDispose<List<ExerciseModel>>(
+  (ref) {
+    final String? category = ref.watch(selectedCategoryProvider);
+    return ref.watch(exerciseRepositoryProvider).library(category: category);
+  },
+);

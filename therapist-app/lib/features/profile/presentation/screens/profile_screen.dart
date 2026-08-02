@@ -98,10 +98,11 @@ class ProfileScreen extends ConsumerWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: (user.isVerified
-                                  ? AppColors.success
-                                  : AppColors.warning)
-                              .withValues(alpha: 0.12),
+                          color:
+                              (user.isVerified
+                                      ? AppColors.success
+                                      : AppColors.warning)
+                                  .withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -121,8 +122,8 @@ class ProfileScreen extends ConsumerWidget {
                               user.isVerified
                                   ? 'Verified'
                                   : (user.kycStatus == 'PENDING'
-                                      ? 'Verification in review'
-                                      : 'Not verified'),
+                                        ? 'Verification in review'
+                                        : 'Not verified'),
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
@@ -206,8 +207,9 @@ class ProfileScreen extends ConsumerWidget {
                 leading: const Icon(Icons.logout, color: AppColors.danger),
                 title: Text(
                   'Logout',
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: AppColors.danger),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.danger,
+                  ),
                 ),
                 onTap: () => _confirmLogout(context, ref),
               ),

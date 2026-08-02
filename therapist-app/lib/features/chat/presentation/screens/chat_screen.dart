@@ -142,12 +142,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
       body: Column(
         children: [
-          Expanded(
-            child: _buildMessages(state, myUserId),
-          ),
+          Expanded(child: _buildMessages(state, myUserId)),
 
-          if (_isUploading)
-            const LinearProgressIndicator(minHeight: 2),
+          if (_isUploading) const LinearProgressIndicator(minHeight: 2),
 
           SafeArea(
             child: Container(
@@ -231,11 +228,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         final bool isMine = message.senderId == myUserId;
 
         // A date divider is inserted whenever the calendar day changes
-        final bool showDateDivider = index == 0 ||
-            !_isSameDay(
-              state.messages[index - 1].createdAt,
-              message.createdAt,
-            );
+        final bool showDateDivider =
+            index == 0 ||
+            !_isSameDay(state.messages[index - 1].createdAt, message.createdAt);
 
         return Column(
           children: [
@@ -258,8 +253,11 @@ class _DateDivider extends StatelessWidget {
 
   String get _label {
     final DateTime now = DateTime.now();
-    final Duration difference = DateTime(now.year, now.month, now.day)
-        .difference(DateTime(date.year, date.month, date.day));
+    final Duration difference = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).difference(DateTime(date.year, date.month, date.day));
 
     if (difference.inDays == 0) return 'Today';
     if (difference.inDays == 1) return 'Yesterday';
@@ -279,7 +277,9 @@ class _DateDivider extends StatelessWidget {
           ),
           child: Text(
             _label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(fontSize: 11),
           ),
         ),
       ),
@@ -300,8 +300,8 @@ class _MessageBubble extends StatelessWidget {
     final Color bubbleColor = isMine
         ? theme.colorScheme.primary
         : (theme.brightness == Brightness.dark
-            ? AppColors.darkSurface
-            : Colors.white);
+              ? AppColors.darkSurface
+              : Colors.white);
 
     final Color textColor = isMine
         ? Colors.white
@@ -327,8 +327,9 @@ class _MessageBubble extends StatelessWidget {
           border: isMine ? null : Border.all(color: theme.dividerColor),
         ),
         child: Column(
-          crossAxisAlignment:
-              isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: isMine
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             if (message.attachmentUrl != null) ...[
               ClipRRect(

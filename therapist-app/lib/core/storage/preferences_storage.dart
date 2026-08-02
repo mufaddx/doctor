@@ -48,7 +48,8 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
       setMode(enabled ? ThemeMode.dark : ThemeMode.light);
 }
 
-final themeModeProvider =
-    StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((
+  ref,
+) {
   return ThemeModeNotifier(ref.watch(preferencesStorageProvider));
 });

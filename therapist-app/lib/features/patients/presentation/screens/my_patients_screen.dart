@@ -131,8 +131,7 @@ class _MyPatientsScreenState extends ConsumerState<MyPatientsScreen> {
                             ],
                           ),
                           trailing: const Icon(Icons.chevron_right),
-                          onTap: () =>
-                              context.go('/patients/${patient.id}'),
+                          onTap: () => context.go('/patients/${patient.id}'),
                         ),
                       );
                     },

@@ -65,7 +65,9 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
     setState(() => _isSaving = true);
 
     try {
-      await ref.read(availabilityRepositoryProvider).create(
+      await ref
+          .read(availabilityRepositoryProvider)
+          .create(
             dayOfWeek: _selectedDay,
             startTime: startTime,
             endTime: endTime,
@@ -147,10 +149,9 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           onRetry: () => ref.invalidate(availabilityProvider),
         ),
         data: (allSlots) {
-          final daySlots = allSlots
-              .where((slot) => slot.dayOfWeek == _selectedDay)
-              .toList()
-            ..sort((a, b) => a.startTime.compareTo(b.startTime));
+          final daySlots =
+              allSlots.where((slot) => slot.dayOfWeek == _selectedDay).toList()
+                ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
           return Column(
             children: [
@@ -161,8 +162,9 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                   children: List.generate(7, (day) {
                     final bool selected = day == _selectedDay;
                     // A dot marks days that already have working hours
-                    final bool hasSlots =
-                        allSlots.any((slot) => slot.dayOfWeek == day);
+                    final bool hasSlots = allSlots.any(
+                      (slot) => slot.dayOfWeek == day,
+                    );
 
                     return GestureDetector(
                       onTap: () => setState(() => _selectedDay = day),
@@ -173,8 +175,9 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                           color: selected
                               ? theme.colorScheme.primary
                               : theme.colorScheme.surface,
-                          borderRadius:
-                              BorderRadius.circular(AppSpacing.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.radiusMd,
+                          ),
                           border: Border.all(
                             color: selected
                                 ? theme.colorScheme.primary
@@ -199,8 +202,8 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                                 shape: BoxShape.circle,
                                 color: hasSlots
                                     ? (selected
-                                        ? Colors.white
-                                        : theme.colorScheme.primary)
+                                          ? Colors.white
+                                          : theme.colorScheme.primary)
                                     : Colors.transparent,
                               ),
                             ),
@@ -217,7 +220,8 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
               Expanded(
                 child: daySlots.isEmpty
                     ? AppEmptyView(
-                        title: 'No working hours on ${_dayLabels[_selectedDay]}',
+                        title:
+                            'No working hours on ${_dayLabels[_selectedDay]}',
                         message:
                             'Add a window so patients can book slots on this day.',
                         icon: Icons.schedule_outlined,

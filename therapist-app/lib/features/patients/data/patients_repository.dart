@@ -26,23 +26,21 @@ class PatientSummary {
   final String? lastProblem;
 
   factory PatientSummary.fromJson(Map<String, dynamic> json) => PatientSummary(
-        id: json['id'] as String,
-        fullName: json['fullName'] as String? ?? 'Patient',
-        avatarUrl: json['avatarUrl'] as String?,
-        phone: json['phone'] as String?,
-        gender: json['gender'] as String?,
-        age: json['age'] as int?,
-        lastAppointment: json['lastAppointment'] == null
-            ? null
-            : DateTime.parse(json['lastAppointment'] as String),
-        lastProblem: json['lastProblem'] as String?,
-      );
+    id: json['id'] as String,
+    fullName: json['fullName'] as String? ?? 'Patient',
+    avatarUrl: json['avatarUrl'] as String?,
+    phone: json['phone'] as String?,
+    gender: json['gender'] as String?,
+    age: json['age'] as int?,
+    lastAppointment: json['lastAppointment'] == null
+        ? null
+        : DateTime.parse(json['lastAppointment'] as String),
+    lastProblem: json['lastProblem'] as String?,
+  );
 
   /// "Male, 28 Years" style subtitle; omits whichever field is missing.
-  String get demographics => [
-        if (gender != null) gender,
-        if (age != null) '$age Years',
-      ].join(', ');
+  String get demographics =>
+      [if (gender != null) gender, if (age != null) '$age Years'].join(', ');
 }
 
 class PatientAppointment {
@@ -218,13 +216,14 @@ final patientsRepositoryProvider = Provider<PatientsRepository>((ref) {
 
 final patientSearchProvider = StateProvider.autoDispose<String>((ref) => '');
 
-final myPatientsProvider =
-    FutureProvider.autoDispose<List<PatientSummary>>((ref) {
+final myPatientsProvider = FutureProvider.autoDispose<List<PatientSummary>>((
+  ref,
+) {
   final String search = ref.watch(patientSearchProvider);
   return ref.watch(patientsRepositoryProvider).myPatients(search: search);
 });
 
-final patientHistoryProvider =
-    FutureProvider.autoDispose.family<PatientHistory, String>((ref, patientId) {
-  return ref.watch(patientsRepositoryProvider).history(patientId);
-});
+final patientHistoryProvider = FutureProvider.autoDispose
+    .family<PatientHistory, String>((ref, patientId) {
+      return ref.watch(patientsRepositoryProvider).history(patientId);
+    });

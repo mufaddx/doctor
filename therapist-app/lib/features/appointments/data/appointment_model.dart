@@ -83,7 +83,9 @@ class AppointmentModel {
   /// A prescription can only be written once the session has actually started.
   bool get canWritePrescription =>
       prescriptionId == null &&
-      (status == 'IN_PROGRESS' || status == 'CONFIRMED' || status == 'COMPLETED');
+      (status == 'IN_PROGRESS' ||
+          status == 'CONFIRMED' ||
+          status == 'COMPLETED');
 
   /// The room opens 15 minutes early and closes 15 minutes after the end.
   bool get canJoinCall {
@@ -105,22 +107,22 @@ class AppointmentModel {
   }
 
   String get readableType => switch (type) {
-        'CLINIC_VISIT' => 'Clinic Visit',
-        'HOME_VISIT' => 'Home Visit',
-        'VIDEO_CONSULTATION' => 'Video Consultation',
-        _ => type,
-      };
+    'CLINIC_VISIT' => 'Clinic Visit',
+    'HOME_VISIT' => 'Home Visit',
+    'VIDEO_CONSULTATION' => 'Video Consultation',
+    _ => type,
+  };
 
   String get readableStatus => switch (status) {
-        'PENDING' => 'Awaiting Your Response',
-        'CONFIRMED' => 'Confirmed',
-        'IN_PROGRESS' => 'In Progress',
-        'COMPLETED' => 'Completed',
-        'CANCELLED' => 'Cancelled',
-        'REJECTED' => 'Declined',
-        'NO_SHOW' => 'No Show',
-        _ => status,
-      };
+    'PENDING' => 'Awaiting Your Response',
+    'CONFIRMED' => 'Confirmed',
+    'IN_PROGRESS' => 'In Progress',
+    'COMPLETED' => 'Completed',
+    'CANCELLED' => 'Cancelled',
+    'REJECTED' => 'Declined',
+    'NO_SHOW' => 'No Show',
+    _ => status,
+  };
 
   String get displayTime {
     final parts = startTime.split(':');
@@ -145,9 +147,9 @@ class DashboardStats {
   final int homeVisits;
 
   factory DashboardStats.fromJson(Map<String, dynamic> json) => DashboardStats(
-        todayAppointments: json['todayAppointments'] as int? ?? 0,
-        pendingRequests: json['pendingRequests'] as int? ?? 0,
-        videoConsultations: json['videoConsultations'] as int? ?? 0,
-        homeVisits: json['homeVisits'] as int? ?? 0,
-      );
+    todayAppointments: json['todayAppointments'] as int? ?? 0,
+    pendingRequests: json['pendingRequests'] as int? ?? 0,
+    videoConsultations: json['videoConsultations'] as int? ?? 0,
+    homeVisits: json['homeVisits'] as int? ?? 0,
+  );
 }

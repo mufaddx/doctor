@@ -35,10 +35,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     FocusScope.of(context).unfocus();
 
-    final bool ok = await ref.read(authProvider.notifier).login(
-          _phoneController.text.trim(),
-          _passwordController.text,
-        );
+    final bool ok = await ref
+        .read(authProvider.notifier)
+        .login(_phoneController.text.trim(), _passwordController.text);
 
     if (!mounted || ok) return;
 
@@ -185,8 +184,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     const Expanded(child: Divider()),
                     Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                      ),
                       child: Text(
                         'or continue with',
                         style: theme.textTheme.bodySmall,

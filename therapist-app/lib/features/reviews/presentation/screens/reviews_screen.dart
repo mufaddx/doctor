@@ -200,14 +200,15 @@ class ReviewsScreen extends ConsumerWidget {
                                         review.authorName,
                                         style: theme.textTheme.bodyMedium
                                             ?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     Text(
-                                      DateFormat('d MMM yyyy')
-                                          .format(review.createdAt),
+                                      DateFormat(
+                                        'd MMM yyyy',
+                                      ).format(review.createdAt),
                                       style: theme.textTheme.bodySmall,
                                     ),
                                   ],

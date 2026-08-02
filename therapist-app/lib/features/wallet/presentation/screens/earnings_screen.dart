@@ -51,9 +51,9 @@ class EarningsScreen extends ConsumerWidget {
                         fontSize: 12,
                         color: selected ? Colors.white : null,
                       ),
-                      onSelected: (_) => ref
-                          .read(selectedPeriodProvider.notifier)
-                          .state = option.value,
+                      onSelected: (_) =>
+                          ref.read(selectedPeriodProvider.notifier).state =
+                              option.value,
                     ),
                   ),
                 );
@@ -63,7 +63,8 @@ class EarningsScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.md),
 
             earningsAsync.when(
-              loading: () => const AppListSkeleton(itemCount: 2, itemHeight: 110),
+              loading: () =>
+                  const AppListSkeleton(itemCount: 2, itemHeight: 110),
               error: (error, _) => AppErrorView(
                 message: error.toString(),
                 onRetry: () => ref.invalidate(earningsProvider),
@@ -174,7 +175,8 @@ class EarningsScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.sm),
 
             payoutsAsync.when(
-              loading: () => const AppListSkeleton(itemCount: 3, itemHeight: 64),
+              loading: () =>
+                  const AppListSkeleton(itemCount: 3, itemHeight: 64),
               error: (error, _) => AppErrorView(
                 message: error.toString(),
                 onRetry: () => ref.invalidate(payoutsProvider),
@@ -197,15 +199,15 @@ class EarningsScreen extends ConsumerWidget {
                       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: (settled
-                                  ? AppColors.success
-                                  : AppColors.warning)
-                              .withValues(alpha: 0.12),
+                          backgroundColor:
+                              (settled ? AppColors.success : AppColors.warning)
+                                  .withValues(alpha: 0.12),
                           child: Icon(
                             settled ? Icons.check : Icons.schedule,
                             size: 18,
-                            color:
-                                settled ? AppColors.success : AppColors.warning,
+                            color: settled
+                                ? AppColors.success
+                                : AppColors.warning,
                           ),
                         ),
                         title: Text(
@@ -215,9 +217,9 @@ class EarningsScreen extends ConsumerWidget {
                           ),
                         ),
                         subtitle: Text(
-                          DateFormat('d MMM yyyy').format(
-                            payout.processedAt ?? payout.createdAt,
-                          ),
+                          DateFormat(
+                            'd MMM yyyy',
+                          ).format(payout.processedAt ?? payout.createdAt),
                           style: theme.textTheme.bodySmall,
                         ),
                         trailing: Text(
