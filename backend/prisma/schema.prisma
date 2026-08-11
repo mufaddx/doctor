@@ -1,6 +1,6 @@
 // ==========================================================
 // Touch of Cure — Prisma Schema
-// PostgreSQL
+// MySQL
 // ==========================================================
 
 generator client {
@@ -8,7 +8,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -121,7 +121,8 @@ model User {
   avatarUrl       String?
   isActive        Boolean       @default(true)
   isVerified      Boolean       @default(false)
-  fcmTokens       String[]      @default([])
+  // MySQL has no native array type; stored as a JSON array of strings.
+  fcmTokens       Json          @default("[]")
   refreshTokens   RefreshToken[]
   otps            OtpCode[]
   createdAt       DateTime      @default(now())
@@ -224,7 +225,8 @@ model Therapist {
   id                String    @id @default(uuid())
   userId            String    @unique
   user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  specialization    String[]  @default([]) // Back Pain, Neck Pain, Sports Injury...
+  // MySQL has no native array type; stored as a JSON array of strings.
+  specialization    Json      @default("[]") // Back Pain, Neck Pain, Sports Injury...
   experienceYears   Int       @default(0)
   bio               String?
   clinicFee         Decimal   @default(0) @db.Decimal(10, 2)
@@ -301,7 +303,8 @@ model Admin {
   id          String   @id @default(uuid())
   userId      String   @unique
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  permissions String[] @default([]) // fine-grained RBAC keys
+  // MySQL has no native array type; stored as a JSON array of strings.
+  permissions Json     @default("[]") // fine-grained RBAC keys
   isSuper     Boolean  @default(false)
   createdAt   DateTime @default(now())
 
@@ -497,7 +500,8 @@ model Exercise {
   durationMinutes Int
   videoUrl        String
   thumbnailUrl    String?
-  instructions    String[]   @default([])
+  // MySQL has no native array type; stored as a JSON array of strings.
+  instructions    Json       @default("[]")
   isGlobal        Boolean    @default(false) // in admin exercise library
   assignments     ExerciseAssignment[]
   createdAt       DateTime   @default(now())

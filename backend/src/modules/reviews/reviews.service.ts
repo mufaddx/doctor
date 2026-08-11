@@ -163,7 +163,7 @@ export class ReviewsService {
     const { skip, take, page, limit } = buildPagination(query);
 
     const where = query.search
-      ? { comment: { contains: query.search, mode: 'insensitive' as const } }
+      ? { comment: { contains: query.search } }
       : {};
 
     const [items, total] = await this.prisma.$transaction([

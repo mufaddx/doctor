@@ -391,9 +391,10 @@ export class AuthService {
 
   private async markVerifiedAndStoreFcm(userId: string, fcmToken?: string) {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const existingTokens = (user.fcmTokens as string[]) ?? [];
     const tokens = fcmToken
-      ? Array.from(new Set([...user.fcmTokens, fcmToken]))
-      : user.fcmTokens;
+      ? Array.from(new Set([...existingTokens, fcmToken]))
+      : existingTokens;
 
     await this.prisma.user.update({
       where: { id: userId },

@@ -146,11 +146,12 @@ export class UsersService {
       where: { id: userId },
       select: { fcmTokens: true },
     });
+    const fcmTokens = (user.fcmTokens as string[]) ?? [];
 
-    if (!user.fcmTokens.includes(token)) {
+    if (!fcmTokens.includes(token)) {
       await this.prisma.user.update({
         where: { id: userId },
-        data: { fcmTokens: [...user.fcmTokens, token] },
+        data: { fcmTokens: [...fcmTokens, token] },
       });
     }
     return { message: 'Device registered for push notifications' };
@@ -161,10 +162,11 @@ export class UsersService {
       where: { id: userId },
       select: { fcmTokens: true },
     });
+    const fcmTokens = (user.fcmTokens as string[]) ?? [];
 
     await this.prisma.user.update({
       where: { id: userId },
-      data: { fcmTokens: user.fcmTokens.filter((t) => t !== token) },
+      data: { fcmTokens: fcmTokens.filter((t) => t !== token) },
     });
     return { message: 'Device unregistered' };
   }

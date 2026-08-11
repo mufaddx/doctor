@@ -145,7 +145,7 @@ export class CouponsService {
     const { skip, take, page, limit } = buildPagination(query);
 
     const where: Prisma.CouponWhereInput = query.search
-      ? { code: { contains: query.search, mode: 'insensitive' } }
+      ? { code: { contains: query.search } }
       : {};
 
     const [items, total] = await this.prisma.$transaction([

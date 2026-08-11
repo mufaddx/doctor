@@ -41,8 +41,9 @@ export class NotificationsService {
       select: { fcmTokens: true },
     });
 
-    if (user?.fcmTokens.length) {
-      const { invalidTokens } = await this.firebase.sendMulticast(user.fcmTokens, {
+    const fcmTokens = (user?.fcmTokens as string[] | undefined) ?? [];
+    if (fcmTokens.length) {
+      const { invalidTokens } = await this.firebase.sendMulticast(fcmTokens, {
         title: params.title,
         body: params.body,
         data: { ...(params.data ?? {}), type: params.type, notificationId: notification.id },
@@ -51,7 +52,7 @@ export class NotificationsService {
       if (invalidTokens.length) {
         await this.prisma.user.update({
           where: { id: params.userId },
-          data: { fcmTokens: user.fcmTokens.filter((t) => !invalidTokens.includes(t)) },
+          data: { fcmTokens: fcmTokens.filter((t) => !invalidTokens.includes(t)) },
         });
       }
     }

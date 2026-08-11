@@ -43,7 +43,7 @@ export class ExercisesService {
       ...(dto.category ? { category: dto.category } : {}),
       ...(dto.level ? { level: dto.level } : {}),
       ...(dto.search
-        ? { title: { contains: dto.search, mode: 'insensitive' } }
+        ? { title: { contains: dto.search } }
         : {}),
     };
 

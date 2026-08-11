@@ -48,8 +48,8 @@ export class AdminService {
       ...(query.search
         ? {
             OR: [
-              { fullName: { contains: query.search, mode: 'insensitive' } },
-              { email: { contains: query.search, mode: 'insensitive' } },
+              { fullName: { contains: query.search } },
+              { email: { contains: query.search } },
               { phone: { contains: query.search } },
             ],
           }
@@ -161,7 +161,7 @@ export class AdminService {
     const where: Prisma.TherapistWhereInput = {
       kycStatus: query.status ?? KycStatus.PENDING,
       ...(query.search
-        ? { user: { fullName: { contains: query.search, mode: 'insensitive' } } }
+        ? { user: { fullName: { contains: query.search } } }
         : {}),
     };
 
@@ -377,7 +377,7 @@ export class AdminService {
 
     const where: Prisma.BlogWhereInput = {
       ...(publishedOnly ? { published: true } : {}),
-      ...(query.search ? { title: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search ? { title: { contains: query.search } } : {}),
     };
 
     const [items, total] = await this.prisma.$transaction([
@@ -439,7 +439,7 @@ export class AdminService {
     const where: Prisma.SupportTicketWhereInput = {
       ...(query.status ? { status: query.status } : {}),
       ...(query.search
-        ? { subject: { contains: query.search, mode: 'insensitive' } }
+        ? { subject: { contains: query.search } }
         : {}),
     };
 
@@ -489,8 +489,8 @@ export class AdminService {
     const where: Prisma.AuditLogWhereInput = query.search
       ? {
           OR: [
-            { action: { contains: query.search, mode: 'insensitive' } },
-            { entityType: { contains: query.search, mode: 'insensitive' } },
+            { action: { contains: query.search } },
+            { entityType: { contains: query.search } },
           ],
         }
       : {};

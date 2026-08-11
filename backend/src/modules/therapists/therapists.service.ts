@@ -30,34 +30,49 @@ export class TherapistsService {
   async search(dto: SearchTherapistsDto) {
     const { skip, take, page, limit } = buildPagination(dto);
 
+    // Each OR-producing filter is pushed as its own AND entry rather than
+    // spread into one object literal — spreading more than one "OR" key into
+    // the same object silently drops all but the last (object keys can't
+    // repeat), which would have quietly broken combined filters.
+    const andConditions: Prisma.TherapistWhereInput[] = [];
+
+    if (dto.specialization?.length) {
+      // specialization is stored as a JSON array (MySQL has no native array
+      // type), so "any of these values" needs an OR of array_contains checks
+      // instead of Postgres's hasSome.
+      andConditions.push({
+        OR: dto.specialization.map((s) => ({ specialization: { array_contains: s } })),
+      });
+    }
+    if (dto.maxFee !== undefined) {
+      andConditions.push({
+        OR: [
+          { clinicFee: { lte: dto.maxFee } },
+          { videoFee: { lte: dto.maxFee } },
+          { homeVisitFee: { lte: dto.maxFee } },
+        ],
+      });
+    }
+    if (dto.search) {
+      andConditions.push({
+        OR: [
+          { user: { fullName: { contains: dto.search } } },
+          { specialization: { array_contains: dto.search } },
+          { bio: { contains: dto.search } },
+        ],
+      });
+    }
+
     const where: Prisma.TherapistWhereInput = {
       // Only verified, active therapists are ever discoverable
       kycStatus: KycStatus.APPROVED,
       user: { isActive: true },
       ...(dto.isAvailable !== undefined ? { isAvailable: dto.isAvailable } : {}),
-      ...(dto.specialization?.length ? { specialization: { hasSome: dto.specialization } } : {}),
       ...(dto.minRating !== undefined ? { ratingAvg: { gte: dto.minRating } } : {}),
       ...(dto.minExperience !== undefined
         ? { experienceYears: { gte: dto.minExperience } }
         : {}),
-      ...(dto.maxFee !== undefined
-        ? {
-            OR: [
-              { clinicFee: { lte: dto.maxFee } },
-              { videoFee: { lte: dto.maxFee } },
-              { homeVisitFee: { lte: dto.maxFee } },
-            ],
-          }
-        : {}),
-      ...(dto.search
-        ? {
-            OR: [
-              { user: { fullName: { contains: dto.search, mode: 'insensitive' } } },
-              { specialization: { has: dto.search } },
-              { bio: { contains: dto.search, mode: 'insensitive' } },
-            ],
-          }
-        : {}),
+      ...(andConditions.length ? { AND: andConditions } : {}),
     };
 
     const [rows, total] = await this.prisma.$transaction([

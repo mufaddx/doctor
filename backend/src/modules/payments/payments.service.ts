@@ -397,8 +397,8 @@ export class PaymentsService {
       ...(query.search
         ? {
             OR: [
-              { razorpayOrderId: { contains: query.search, mode: 'insensitive' } },
-              { razorpayPaymentId: { contains: query.search, mode: 'insensitive' } },
+              { razorpayOrderId: { contains: query.search } },
+              { razorpayPaymentId: { contains: query.search } },
             ],
           }
         : {}),

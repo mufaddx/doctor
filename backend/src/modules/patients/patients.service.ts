@@ -165,7 +165,7 @@ export class PatientsService {
       where: {
         appointments: { some: { therapistId: therapist.id } },
         ...(search
-          ? { user: { fullName: { contains: search, mode: 'insensitive' } } }
+          ? { user: { fullName: { contains: search } } }
           : {}),
       },
       select: {
